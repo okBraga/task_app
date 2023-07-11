@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SliderWidget extends StatefulWidget {
-  const SliderWidget({super.key});
+  //TODO find how to set the color of the slider.
+  final Color? progressColor;
+
+  const SliderWidget({super.key, this.progressColor});
 
   @override
   State<SliderWidget> createState() => _SliderWidgetState();
@@ -14,16 +17,14 @@ class _SliderWidgetState extends State<SliderWidget> {
   Widget build(BuildContext context) {
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
-        rangeTrackShape: const RoundedRectRangeSliderTrackShape(),
-        thumbShape: SliderComponentShape.noThumb,
-        overlayShape: SliderComponentShape.noOverlay,
-      ),
+          activeTrackColor: Colors.white,
+          rangeTrackShape: const RoundedRectRangeSliderTrackShape(),
+          thumbShape: SliderComponentShape.noThumb,
+          overlayShape: SliderComponentShape.noOverlay,
+          trackHeight: 5),
       child: Padding(
         padding: const EdgeInsets.only(
-          top: 1,
-          right: 10,
-          left: 10,
-          bottom: 15,
+          bottom: 8,
         ),
         child: Slider(
           min: 0,

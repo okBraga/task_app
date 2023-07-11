@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:task_app/widgets/slider_widget.dart';
+import 'package:task_app/shared/components/task_widget.dart';
+import 'package:task_app/shared/service/http_service.dart';
 
-import '../model/task.dart';
-import '../service/http_service.dart';
+import 'package:http/http.dart' as http;
+
+import '../shared/models/task.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
-
-  final HttpService httpService = HttpService(url: 'https://5fd6-2804-14d-be85-8d50-a835-becd-dba0-74fa.sa.ngrok.io/tasks');
+  const HomePage({super.key});
 
   static const _appBarTitle = 'My Tasks';
   static const _addButtonIcon = Icons.add;
@@ -17,6 +17,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      //Color.fromARGB(255, 20, 20, 20),
       appBar: AppBar(
         title: const Text(
           _appBarTitle,
@@ -30,75 +31,32 @@ class HomePage extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              // Perform search action
+              //TODO Perform search action
             },
           ),
         ],
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: FutureBuilder(
-          future: httpService.fetchTasks(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Text('${snapshot.error}'),
-              );
-            }
-            if (snapshot.hasData) {
-              List<Task>? tasks = snapshot.data;
-              return ListView.separated(
-                itemCount: tasks!.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, '/task'),
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(13.5),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ListTile(
-                              title: Text(
-                                tasks[index].title,
-                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              subtitle: Text(
-                                tasks[index].title,
-                                textAlign: TextAlign.start,
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              //Todo see how to calculate how many subtasks are completed
-                              child: Align(alignment: Alignment.centerRight, child: Text('5 of 10 Tasks')),
-                            ),
-                            const SliderWidget(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(
-                    height: 5,
-                  );
-                },
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
+      body: FutureBuilder<List<Task>>(
+        future: HttpService().fetchTasks(http.Client()),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Center(child: Text('An error has occurred!')),
+            );
+          } else if (snapshot.hasData) {
+            return TaskList(tasks: snapshot.data!);
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.black,
+        surfaceTintColor: Colors.black,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -112,6 +70,43 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class TaskList extends StatelessWidget {
+  const TaskList({super.key, required this.tasks});
+
+  final List<Task> tasks;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: TaskWidget(
+            title: Text(
+              tasks[index].title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            description: Text(
+              tasks[index].description,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+            ),
+            taskColor: Colors.deepPurple,
+          ),
+        );
+      },
     );
   }
 }

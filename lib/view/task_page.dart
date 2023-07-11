@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_app/widgets/check_list.dart';
+import 'package:task_app/shared/components/check_list.dart';
 
 class TaskPage extends StatelessWidget {
   const TaskPage({super.key});
@@ -23,6 +23,7 @@ class TaskPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.only(left: 15),
               child: Text(
@@ -33,6 +34,7 @@ class TaskPage extends StatelessWidget {
                     ),
               ),
             ),
+            const SizedBox(height: 8),
             const Padding(
               padding: EdgeInsets.only(left: 15),
               child: Text(
@@ -40,10 +42,11 @@ class TaskPage extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
             ),
+            const SizedBox(height: 40),
             const Padding(
               padding: EdgeInsets.only(left: 15),
               child: Text(
-                'CheckList',
+                'SubTasks',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -51,18 +54,27 @@ class TaskPage extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 8),
             ListView.separated(
               shrinkWrap: true,
               itemCount: 5, // replace with the number of items you want to display
               separatorBuilder: (context, index) => const SizedBox(
-                height: 4,
+                height: 2,
               ),
               itemBuilder: (context, index) {
-                return const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Card(child: CheckList()),
-                  ],
+                return const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                        child: CheckList(),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
